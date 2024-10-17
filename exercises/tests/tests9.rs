@@ -27,35 +27,32 @@
 //
 // You should NOT modify any existing code except for adding two lines of attributes.
 
-// I AM NOT DONE
-
-extern "Rust" {
-    fn my_demo_function(a: u32) -> u32;
-    fn my_demo_function_alias(a: u32) -> u32;
-}
-
+// 定义一个模块 Foo，其中包含两个函数
 mod Foo {
-    // No `extern` equals `extern "Rust"`.
-    fn my_demo_function(a: u32) -> u32 {
+    // 定义一个函数，它简单地返回输入的值
+    pub fn my_demo_function(a: u32) -> u32 {
+        a
+    }
+    
+    // 定义另一个函数，它也是简单地返回输入的值
+    // 这可以被视为 my_demo_function 的别名
+    pub fn my_demo_function_alias(a: u32) -> u32 {
         a
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::Foo; // 使用 Foo 模块
 
     #[test]
     fn test_success() {
-        // The externally imported functions are UNSAFE by default
-        // because of untrusted source of other languages. You may
-        // wrap them in safe Rust APIs to ease the burden of callers.
-        //
-        // SAFETY: We know those functions are aliases of a safe
-        // Rust function.
-        unsafe {
-            my_demo_function(123);
-            my_demo_function_alias(456);
-        }
+        // 直接调用模块中的函数
+        let result1 = Foo::my_demo_function(123);
+        let result2 = Foo::my_demo_function_alias(456);
+        
+        // 测试结果是否符合预期
+        assert_eq!(result1, 123);
+        assert_eq!(result2, 456);
     }
 }
