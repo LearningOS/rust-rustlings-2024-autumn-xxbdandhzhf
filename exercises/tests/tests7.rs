@@ -33,23 +33,29 @@
 //
 // Execute `rustlings hint tests7` or use the `hint` watch subcommand for a
 // hint.
+use std::env;
+use std::time::{SystemTime, UNIX_EPOCH};
 
-// I AM NOT DONE
-
-fn main() {}
+fn main() {
+    let timestamp = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("Time went backwards")
+        .as_secs();
+    println!("cargo:rustc-env=TEST_FOO={}", timestamp);
+}
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     #[test]
     fn test_success() {
+        // 获取当前时间戳
         let timestamp = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
-            .unwrap()
+            .expect("Time went backwards")
             .as_secs();
-        let s = std::env::var("TEST_FOO").unwrap();
-        let e: u64 = s.parse().unwrap();
+        // 使用 cfg! 宏读取编译时配置的时间戳
+        let e: u64 = std::env::var("TEST_FOO").expect("TEST_FOO is not set").parse().expect("Failed to parse TEST_FOO");
+
         assert!(timestamp >= e && timestamp < e + 10);
     }
 }
